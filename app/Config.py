@@ -1,0 +1,5 @@
+Channel_secret = 'e561607bf37dc04864c0b00245f98209'
+
+Channel_access_token = 'UtpGNt+NTYJg9G3a8OTdTAGq0YLBr9a77v+2r2dTpChlmfI7qBZU5OcF6vy6FVOrT5uLw2QHrleA7D4vqVE4PLkwFOovhNw0ut4Ge795gk1kbcHeEoY1G6dyV7fwpEgFYtAesuxrVReNSKFDoEPP6AdB04t89/1O/w1cDnyilFU='
+
+basic_id = '@457ftryn'
