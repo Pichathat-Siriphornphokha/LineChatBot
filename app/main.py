@@ -12,6 +12,9 @@ from keras.preprocessing.sequence import pad_sequences
 from sklearn.model_selection import train_test_split
 from gensim.models import KeyedVectors
 import pickle
+from random import randint
+
+
 model = load_model('app\my_model')
 # Load the vectors
 word2vec_model = KeyedVectors.load_word2vec_format('LTW2V_v0.1.bin', binary=True, unicode_errors='ignore')
@@ -35,7 +38,7 @@ def webhook():
         message = payload['events'][0]['message']['text']
         print(message)
         text = message
-        df = pd.read_csv (r"C:\Users\bossi\Desktop\Clone ChatBot\LineChatBot\project data set.csv")
+        df = pd.read_csv (r"C:\Users\bossi\Desktop\Clone 2 ChatBot\GitHub\LineChatBot\project data set.csv")
         print (df)
         df.columns =['input_text', 'labels']
         data_df=df
@@ -66,7 +69,7 @@ def webhook():
         # map index
         word_indices = map_word_index(word_seq)
         # padded to max_leng
-        padded_wordindices = pad_sequences([word_indices], maxlen=10, value=0)
+        padded_wordindices = pad_sequences([word_indices], maxlen=32, value=0)
         # predict to get logit
         logit = model.predict(padded_wordindices, batch_size=32)
         # get prediction
@@ -74,13 +77,37 @@ def webhook():
         index_to_label = [label for label in sorted(unique_labels)]
         predict = [ index_to_label[pred] for pred in np.argmax(logit, axis=1) ][0]
         print(np.argmax(logit, axis=1))
-        ReplyMessage(Reply_token,predict,Channel_access_token)
+        if(predict == 'สิทธิการรักษา'):
+          ReplyMessage(Reply_token,'''สิทธิการรักษาพยาบาล มี 3 ระบบใหญ่ คือ
+1.สิทธิหลักประกันสุขภาพแห่งชาติ หรือที่รู้จักกันในนาม สิทธิ 30 บาท หรือ สิทธิบัตรทอง คุ้มครองบริการรักษาพยาบาลให้กับคนไทยทุกคนที่มีหมายเลขบัตรประชาชน 13 หลัก และต้องไม่เป็นผู้ที่มีสิทธิประกันสังคมและสวัสดิการรักษาพยาบาลของข้าราชการ เมื่อเจ็บป่วยสามารถเข้ารับบริการรักษาพยาบาลได้ที่โรงพยาบาลของรัฐ และสถานีอนามัย สำนักงานสาธารณสุขจังหวัด
+2.สิทธิสวัสดิการการรักษาพยาบาลของราชการ คุ้มครองบริการรักษาพยาบาลให้กับข้าราชการและบุคคลในครอบครัว ได้แก่ บิดา มารดา คู่สมรส และบุตรที่ถูกต้องตามกฎหมาย เมื่อเจ็บป่วยสามารถเข้ารับบริการรักษาพยาบาลได้ที่โรงพยาบาลของรัฐ
+3.สิทธิประกันสังคม คุ้มครองบริการ''',Channel_access_token)
+        elif(predict == 'ทักทาย'):
+          ReplyMessage(Reply_token,'''สวัสดีครับ มีข้อสงสัยอะไรสามารถสอบถามได้เลยครับ''',Channel_access_token)
+        elif(predict == 'ช่องทางการติดต่อ '):
+          ReplyMessage(Reply_token,'''ที่อยู่: หมู่ที่ 8 95 ทางคู่ขนาน ถ. พหลโยธิน ตำบล คลองหนึ่ง อำเภอคลองหลวง ปทุมธานี 12120 
+โทรศัพท์: 02 926 9999 
+เว็บไซต์: https://www.hospital.tu.ac.th/
+''',Channel_access_token)
+        elif(predict == 'จะได้เตียงวันไหน'):
+          ReplyMessage(Reply_token,'''เนื่องจากโรงพยาบาลมีผู้ป่วยมาใช้บริการจำนวนมาก แต่เตียงนอนมีจำนวนจำกัด เราจึงมีการบริหารจัดการเตียงให้ผู้ป่วยได้เข้านอนโรงพยาบาลได้เร็วที่สุด โดยมีการตรวจสอบเตียงว่างทุกวัน เพื่อบริหารจัดการเตียงตามลำดับการจอง พร้อมทั้งพิจารณาถึงความเร่งด่วนของผู้ป่วยแต่ละราย โดยกำหนดระยะเวลาไม่เกิน 7 วันหลังจากวันจอง มีการโทรแจ้งผู้ป่วยล่วงหน้า เพื่อให้เตรียมความพร้อมสำหรับการมานอนโรงพยาบาล ในกรณีที่มีเตียงว่างเพิ่มเติมระหว่างวัน เพื่อลดการสูญเสียเตียงโดยเปล่าประโยชน์ จะโทรติดต่อ ผู้ป่วยที่มีความพร้อม และสามารถเดินทางมาได้สะดวกรวดเร็ว ให้เข้านอนโรงพยาบาลโดยทันท่วงที''',Channel_access_token)
+        elif(predict == 'ถามเกี่ยวกับวิธีรักษา'):
+          ReplyMessage(Reply_token,'''https://thaicancersociety.com/wp-content/uploads/lung-cancer-infographic-2020-16-2000x1500.jpg''',Channel_access_token)
+        elif(predict == 'การกิน'):
+          ReplyMessage(Reply_token,'''อาหารประเภทเนื้อสัตว์ ผัก ผลไม้ประเภทต่างๆ จะทำให้ร่างกายแข็งแรงมีส่วนช่วยให้ผู้ป่วยมะเร็งปอดทนต่อผลข้างเคียงจากการรักษา และทำให้มีการตอบสนองต่อการรักษาที่ดี  
+หลีกเลี่ยงอาหารที่มีโอกาสทำให้ท้องเสีย 
+งดการทานผักสดและผลไม้เปลือกบาง เช่น องุ่น ชมพู่ และผลไม้ไม่มีเปลือก เช่น สตรอว์เบอร์รี โดยเฉพาะในช่วง 14 วันแรก หลังได้รับยาเคมีบำบัด''',Channel_access_token)
+        elif(predict == 'การนอน'):
+          ReplyMessage(Reply_token,'''ควรนอนหลับพักผ่อนให้เพียงพออย่างน้อย 6-8 ชั่วโมง''',Channel_access_token)
+        elif(predict == 'การออกกำลังกาย'):
+          ReplyMessage(Reply_token,'''สามารถออกกำลังกายได้ตามแรงที่มี การออกกำลังกายที่เหมาะที่สุดคือ การเดินออกกำลังกายในตอนเช้า 30 นาที''',Channel_access_token)
+        else:
+          ReplyMessage(Reply_token,'''ขอโทษครับ ไม่เข้าใจคำถามครับ''',Channel_access_token)
         return request.json, 200
     elif request.method == 'GET' :
         return 'this is method GET!!!' , 200
     else:
         abort(400)
-
 def ReplyMessage(Reply_token, TextMessage, Line_Acees_Token):
     LINE_API = 'https://api.line.me/v2/bot/message/reply'
 
